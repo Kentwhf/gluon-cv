@@ -67,12 +67,12 @@ from gluoncv.utils import makedirs, LRSequential, LRScheduler, split_and_load, T
 
 # number of GPUs to use
 num_gpus = 1
-ctx = [mx.gpu(i) for i in range(num_gpus)]
+ctx = [mx.cpu(i) for i in range(num_gpus)]
 
 # Get the model vgg16_ucf101 with temporal segment network, with 101 output classes, without pre-trained weights
 net = get_model(name='vgg16_ucf101', nclass=101, num_segments=3)
 net.collect_params().reset_ctx(ctx)
-print(net)
+# print(net)
 
 ################################################################
 # Data Augmentation and Data Loader
@@ -103,7 +103,7 @@ transform_train = transforms.Compose([
 # training datasets.
 
 # Batch Size for Each GPU
-per_device_batch_size = 5
+per_device_batch_size = 16
 # Number of data loader workers
 num_workers = 8
 # Calculate effective total batch size
@@ -113,7 +113,7 @@ batch_size = per_device_batch_size * num_gpus
 train_dataset = UCF101(train=True, num_segments=3, transform=transform_train)
 print('Load %d training samples.' % len(train_dataset))
 train_data = gluon.data.DataLoader(train_dataset, batch_size=batch_size,
-                                   shuffle=True, num_workers=num_workers)
+                                   shuffle=True)
 
 ################################################################
 # Optimizer, Loss and Metric
@@ -158,7 +158,7 @@ train_history = TrainingHistory(['training-acc'])
 #   In order to finish the tutorial quickly, we only train for 3 epochs, and 100 iterations per epoch.
 #   In your experiments, we recommend setting ``epochs=80`` for the full UCF101 dataset.
 
-epochs = 3
+epochs = 10
 lr_decay_count = 0
 
 for epoch in range(epochs):

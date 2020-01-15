@@ -210,7 +210,7 @@ def parse_directory(path, key_func=lambda x: x[-11:],
     if level == 1:
         frame_folders = glob.glob(os.path.join(path, '*'))
     elif level == 2:
-        frame_folders = glob.glob(os.path.join(path, '*', '*'))
+        frame_folders = glob.glob(os.path.join(path, '*', '*[!.avi]'))
     else:
         raise ValueError('level can be only 1 or 2')
 
@@ -254,11 +254,13 @@ def build_split_list(split, frame_info, shuffle=False):
                     item[0], rgb_cnt, item[1]))
                 flow_list.append('{} {} {}\n'.format(
                     item[0], flow_cnt, item[1]))
+                print('log1')
             else:
                 rgb_list.append('{} {}\n'.format(
                     item[0], item[1]))
                 flow_list.append('{} {}\n'.format(
                     item[0], item[1]))
+                print('log2')
         if shuffle:
             random.shuffle(rgb_list)
             random.shuffle(flow_list)
@@ -282,11 +284,16 @@ def build_file_list(args):
                                      flow_x_prefix=args.flow_x_prefix,
                                      flow_y_prefix=args.flow_y_prefix,
                                      level=args.level)
+        new_frame_info = {}
+        for key, value in frame_info.items():
+            new_frame_info[key.replace('ucf101/rawframes\\', '').replace('\\', '/')] = value
+        frame_info = new_frame_info
+
     else:
         if args.level == 1:
             video_list = glob.glob(osp.join(args.frame_path, '*'))
         elif args.level == 2:
-            video_list = glob.glob(osp.join(args.frame_path, '*', '*'))
+            video_list = glob.glob(osp.join(args.frame_path, '*', '*[!.avi]'))
         frame_info = {osp.relpath(
             x.split('.')[0], args.frame_path): (x, -1, -1) for x in video_list}
 
@@ -299,6 +306,7 @@ def build_file_list(args):
     out_path = args.out_list_path
     if len(split_tp) > 1:
         for i, split in enumerate(split_tp):
+            print(frame_info)
             lists = build_split_list(split_tp[i], frame_info,
                                      shuffle=args.shuffle)
             filename = '{}_train_split_{}_{}.txt'.format(args.dataset,
@@ -352,13 +360,15 @@ def download_ucf101(args):
 if __name__ == '__main__':
     args = parse_args()
 
+    # Some arguments not consistent with usage somewhere else
+    # Manually change
     if args.download:
         print('Downloading UCF101 dataset.')
-        download_ucf101(args)
+        # download_ucf101(args)
 
     if args.decode_video:
         print('Decoding videos to frames.')
-        decode_video(args)
+        # decode_video(args)
 
     if args.build_file_list:
         print('Generating training files.')

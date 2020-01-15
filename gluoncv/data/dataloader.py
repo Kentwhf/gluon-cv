@@ -152,6 +152,8 @@ def _worker_fn(samples, transform_fn, batchify_fn):
     global _worker_dataset
     t_dataset = _worker_dataset.transform(transform_fn)
     batch = batchify_fn([t_dataset[i] for i in samples])
+    print(batch)
+    print(type(batch))
     buf = io.BytesIO()
     ForkingPickler(buf, pickle.HIGHEST_PROTOCOL).dump(batch)
     return buf.getvalue()

@@ -9,7 +9,7 @@ from mxnet.gluon.data import dataset
 __all__ = ['UCF101']
 
 class UCF101(dataset.Dataset):
-    """Load the UCF101 video action recognition dataset.
+    """Load the UCF101 video action recognitiondataset.
 
     Refer to :doc:`../build/examples_datasets/ucf101` for the description of
     this dataset and how to prepare it.
@@ -63,7 +63,7 @@ class UCF101(dataset.Dataset):
     """
     def __init__(self,
                  root=os.path.expanduser('~/.mxnet/datasets/ucf101/rawframes'),
-                 setting=os.path.expanduser('~/.mxnet/datasets/ucf101/ucfTrainTestlist/ucf101_train_split_1_rawframes.txt'),
+                 setting=os.path.expanduser('~/.mxnet/datasets/ucf101/ucfTrainTestlist/ucf101_train_split_2_rawframes.txt'),
                  train=True,
                  test_mode=False,
                  name_pattern='img_%05d.jpg',
@@ -115,8 +115,8 @@ class UCF101(dataset.Dataset):
         self.classes, self.class_to_idx = self._find_classes(root)
         self.clips = self._make_dataset(root, setting)
         if len(self.clips) == 0:
-            raise(RuntimeError("Found 0 video clips in subfolders of: " + root + "\n"
-                               "Check your data directory (opt.data-dir)."))
+             raise(RuntimeError("Found 0 video clips in subfolders of: " + root + "\n"
+                                "Check your data directory (opt.data-dir)."))
 
         if name_pattern:
             self.name_pattern = name_pattern
